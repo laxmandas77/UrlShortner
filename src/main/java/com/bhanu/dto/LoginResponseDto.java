@@ -22,4 +22,5 @@ public class LoginResponseDto
     private Plan plan;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isActive;
 }
