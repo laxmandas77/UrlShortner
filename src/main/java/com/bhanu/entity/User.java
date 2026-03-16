@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -44,4 +44,6 @@ public class User {
     private Plan plan=Plan.FREE;
 
     private Boolean isActive;
+
+
 }
