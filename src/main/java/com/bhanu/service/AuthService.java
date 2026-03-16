@@ -66,6 +66,7 @@ public class AuthService {
         response.setPlan(user.getPlan());
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
+        response.setIsActive(true);
         return response;
     }
 
@@ -89,6 +90,7 @@ public class AuthService {
             response.setRole(admin.getRole());
             response.setPlan(admin.getPlan());
             response.setName(admin.getName());
+            response.setIsActive(true);
 
             return response;
         }
