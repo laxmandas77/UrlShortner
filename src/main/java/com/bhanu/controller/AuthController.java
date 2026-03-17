@@ -48,10 +48,21 @@ public class AuthController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers(Authentication authentication)
+    public ResponseEntity<List<User>> getAllUsers()
     {
+
         List<User> list=authService.listAllUsers();
         return ResponseEntity.ok(list);
 
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal")
+    public ResponseEntity<User> getUserById(@PathVariable Long id,
+                                            Authentication authentication) {
+
+        User user = authService.getUserById(id);
+
+        return ResponseEntity.ok(user);
     }
 }
