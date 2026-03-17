@@ -71,8 +71,39 @@ public class AuthService {
         return response;
     }
 
+    public LoginResponseDto adminLogin(LoginRequestDto dto) {
+
+        if (dto.getEmail().equals("admin@gmail.com") && dto.getPassword().equals("admin")) {
+
+            User admin = new User();
+            //admin.setId(1111L);
+            admin.setEmail("admin@gmail.com");
+            admin.setName("Admin");
+            admin.setRole(Role.ADMIN);
+            admin.setPlan(Plan.PRO);
+
+            userRepository.save(admin);
+
+            String token = jwtUtil.generateToken(admin);
+
+            LoginResponseDto response = new LoginResponseDto();
+            response.setToken(token);
+            response.setId(admin.getId());
+            response.setEmail(admin.getEmail());
+            response.setRole(admin.getRole());
+            response.setPlan(admin.getPlan());
+            response.setName(admin.getName());
+            response.setIsActive(true);
+
+            //userRepository.save(admin);
+
+            return response;
+        }
+
+        throw new RuntimeException("Invalid admin credentials");
 
 
+    }
     public List<User> listAllUsers()
     {
         return userRepository.findAll();

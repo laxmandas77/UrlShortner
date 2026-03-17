@@ -43,6 +43,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Plan plan=Plan.FREE;
 
+
     private Boolean isActive;
 
 
