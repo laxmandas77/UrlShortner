@@ -75,11 +75,13 @@ public class AuthService {
         if (dto.getEmail().equals("admin@gmail.com") && dto.getPassword().equals("admin")) {
 
             User admin = new User();
-            admin.setId(1111L);
+            //admin.setId(1111L);
             admin.setEmail("admin@gmail.com");
             admin.setName("Admin");
             admin.setRole(Role.ADMIN);
             admin.setPlan(Plan.PRO);
+
+            userRepository.save(admin);
 
             String token = jwtUtil.generateToken(admin);
 
@@ -91,6 +93,8 @@ public class AuthService {
             response.setPlan(admin.getPlan());
             response.setName(admin.getName());
             response.setIsActive(true);
+
+            //userRepository.save(admin);
 
             return response;
         }
