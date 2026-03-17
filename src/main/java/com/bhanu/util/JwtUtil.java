@@ -28,8 +28,8 @@ public class JwtUtil {
 
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("id", user.getId());
-        claims.put("email", user.getEmail());
+      claims.put("userId", user.getId());
+
         claims.put("name", user.getName());
         claims.put("role", user.getRole().name());
         claims.put("plan", user.getPlan().name());
@@ -49,7 +49,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // GET ALL CLAIMS
+
     public Claims extractAllClaims(String token) {
 
         return Jwts.parserBuilder()
@@ -69,6 +69,11 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Long extractUserId(String token) {
+        Object value = extractAllClaims(token).get("userId");
+        return Long.valueOf(value.toString());
     }
 
 
@@ -93,11 +98,14 @@ public class JwtUtil {
     }
 
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-
-        final String username = extractUsername(token);
-
-        return username.equals(userDetails.getUsername()) &&
-                !isTokenExpired(token);
+//    public boolean validateToken(String token, UserDetails userDetails) {
+//
+//        final String username = extractUsername(token);
+//
+//        return username.equals(userDetails.getUsername()) &&
+//                !isTokenExpired(token);
+//    }
+    public boolean validateToken(String token) {
+        return !isTokenExpired(token);
     }
 }

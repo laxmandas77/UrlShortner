@@ -21,40 +21,54 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter
 {
-    private final JwtUtil jwtUtil;
-    private final AppUserDetailsService userDetailsService;
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String headers=request.getHeader("Authorization");
-        if(headers==null || !headers.startsWith("Bearer "))
-        {
-            filterChain.doFilter(request,response);
-            return;
-        }
-        String token=headers.substring(7);
-        try{
-            String email = jwtUtil.extractUsername(token);
+        private final JwtUtil jwtUtil;
 
-            if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
+        @Override
+        protected void doFilterInternal(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        FilterChain filterChain)
+                throws ServletException, IOException {
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            String header = request.getHeader("Authorization");
 
-                if(jwtUtil.validateToken(token, userDetails)){
-
-                    UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities());
-
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
+            if (header == null || !header.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            String token = header.substring(7);
+
+            try {
+                String email = jwtUtil.extractUsername(token);
+                Long userId = jwtUtil.extractUserId(token);
+                String role = jwtUtil.extractRole(token);
+
+                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                    if (jwtUtil.validateToken(token)) {
+
+                        SimpleGrantedAuthority authority =
+                                new SimpleGrantedAuthority("ROLE_" + role);
+
+                        UsernamePasswordAuthenticationToken auth =
+                                new UsernamePasswordAuthenticationToken(
+                                        userId,
+                                        null,
+                                        List.of(authority)
+                                );
+
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
+                }
+
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid or expired token");
+                return;
+            }
+
+            filterChain.doFilter(request, response);
         }
-        catch (Exception e){
-          throw  new RuntimeException("invalid or expired token");
-        }
-        filterChain.doFilter(request,response);
     }
-}
+
