@@ -34,7 +34,7 @@ public class RedirectService {
 
         String ip = request.getRemoteAddr();
 
-        String country = geoIPService.getCountry(ip);
+        String country = geoIPService.getCountry("8.8.8.8");
 
         ClickEvent event = new ClickEvent();
 
@@ -47,4 +47,6 @@ public class RedirectService {
 
         return link.getOriginalUrl();
     }
+
+
 }

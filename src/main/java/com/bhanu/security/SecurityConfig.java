@@ -43,10 +43,12 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return  new BCryptPasswordEncoder();
     }
+
     @Bean
     public CorsFilter corsFilter(){
         return new CorsFilter(corsConfigurationSource());
