@@ -3,6 +3,7 @@ package com.bhanu.service;
 import com.bhanu.dto.LoginRequestDto;
 import com.bhanu.dto.LoginResponseDto;
 import com.bhanu.dto.RegisterRequestDto;
+import com.bhanu.dto.UserResponseDto;
 import com.bhanu.entity.Plan;
 import com.bhanu.entity.Role;
 import com.bhanu.entity.User;
@@ -11,6 +12,7 @@ import com.bhanu.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -108,9 +110,18 @@ public class AuthService {
     {
         return userRepository.findAll();
     }
-
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    @Cacheable(value = "users_v7", key = "#id")
+    public UserResponseDto getUserById(Long id)
+    {
+        System.out.println("retrieving user from DB...");
+        User user = userRepository.findById(id) .orElseThrow(() -> new RuntimeException("user not found with id: " + id));
+        UserResponseDto dto = new UserResponseDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        dto.setPlan(user.getPlan());
+        dto.setIsActive(user.getIsActive());
+        return dto;
     }
 }
